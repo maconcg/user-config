@@ -1,27 +1,15 @@
-X11-appdefaults ?= ${confdir}/X11/app-defaults
+X11-dest := ${confdir}/X11
 
-dpi ?= ${Xft-auto-dpi}
-Xft-auto-dpi != xdpyinfo | sed -n /resolution:/s/.\*x//p | cut -d\  -f1
+.include "X11/Xdefaults/include.mk"
+.include "X11/cwmrc/include.mk"
 
-X11-static-classes  := X11/XTerm
-X11-static-files    := ${X11-static-classes}
-X11-dynamic-classes := X11/Xft
-X11-dynamic-files   := X11/.Xdefaults ${X11-dynamic-classes}
-X11-classes         := ${X11-static-classes} ${X11-dynamic-classes}
-X11-files           := ${X11-static-files} ${X11-dynamic-files}
+.PHONY: X11 X11/clean X11/install X11/uninstall
 
-.PHONY: X11 X11/clean
+X11: ${Xdefaults-files} ${cwmrc-files}
 
-X11: ${X11-files}
+X11/clean: X11/Xdefaults/clean X11/cwmrc/clean
 
-X11/.Xdefaults: ${X11-classes}
-	> $@;\
-	for f in ${X11-classes}; do\
-		echo -E "#include \"${X11-appdefaults}/$${f##*/}\"" >> $@;\
-	done
+X11/install: X11/Xdefaults/install X11/cwmrc/install
 
-X11/Xft:
-	echo -E 'Xft.dpi:${dpi}' > $@
-
-X11/clean:
-	rm -f ${X11-dynamic-files}
+X11/uninstall: X11/Xdefaults/uninstall X11/cwmrc/uninstall
+	if [[ -d ${X11-dest} ]]; then rmdir ${X11-dest}; fi

@@ -1,0 +1,8 @@
+command emacs /usr/local/bin/emacs
+command emacs-nw "/usr/X11R6/bin/xterm -geometry 133x46 -e /usr/local/bin/emacsclient -a '' -t"
+command firefox /home/mac/.local/libexec/firefox.sh
+command lock "/usr/X11R6/bin/xlock -dpmsoff 8"
+command top "/usr/X11R6/bin/xterm -e /usr/bin/top"
+command xterm /usr/X11R6/bin/xterm
+command mouse-disable "/home/mac/.local/libexec/toggle-mouse.sh -d"
+command mouse-enable "/home/mac/.local/libexec/toggle-mouse.sh -e"

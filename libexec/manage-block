@@ -1,0 +1,109 @@
+#!/bin/sh -euf
+
+while getopts :c:def:n:t:u OPT; do
+    case $OPT in
+	c) readonly comment="$OPTARG" ;;
+        d) readonly action=delete ;;
+        e) readonly action=extract ;;
+        f) readonly from="$OPTARG" ;;
+        n) readonly name="$OPTARG" ;;
+        t) readonly to="$OPTARG" ;;
+        u) readonly action=update ;;
+        *) echo -E "usage: ${0##*/} [-cdefntu] ARGS..."
+           exit 2 ;;
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+readonly begin="${comment}-----BEGIN ${name} BLOCK-----${comment}"
+readonly end="${comment}-----END ${name} BLOCK-----${comment}"
+
+function err_malformed {
+    echo -E "${0##*/}: Malformed block" 1>&2
+    exit 3
+}
+
+function update_block {
+    if [[ "$(<$td/actual)" == "$(<$td/expected)" ]]; then
+        sed "/^$begin\$/q" "$to" > $td/beginning
+        sed -n "/^$end\$/,\$p" "$to" >$td/ending
+        {
+	    echo -E "$(<$td/beginning)"
+	    echo -E "$(<$from)"
+            echo -E "$(<$td/ending)"
+	} > $td/new
+        if [[ "$(<$to)" != "$(<$td/new)" ]]; then
+            echo -E "$(<$td/new)" > "$to"
+        fi
+    elif [[ ! -s $td/actual ]]; then
+        {
+            if [[ -s "$to" ]] && [[ "$(<$to)" == *[^[:space:]]* ]]; then
+                echo -E "$(<$to)"
+                echo
+            fi
+            echo -E "$begin"
+            echo -E "$(<$from)"
+            echo -E "$end"
+        } > $td/new
+        echo -E "$(<$td/new)" > "$to"
+    else
+        err_malformed
+    fi
+}
+
+function delete_block {
+    echo -E > $td/sed-script "#n
+1,/$begin/ {
+    /$begin/!H
+    /$begin/ {
+        x
+        s/^\n*//
+        s/\n*\$//
+        /[^[:space:]]/p
+    }
+}
+/$end/,\$ {
+    /$end/ {
+      s/.*//
+      x
+      d
+    }
+    p
+}"
+
+    if [[ "$(<$td/actual)" == "$(<$td/expected)" ]]; then
+        sed -f $td/sed-script "$to" > $td/new
+        if [[ -s "$td/new" ]] && [[ "$(<$td/new)" == *[^[:space:]]* ]]; then
+            if [[ "$(<$to)" != "$(<$td/new)" ]]; then
+                echo -E "$(<$td/new)" > "$to"
+            fi
+        elif [[ -f "$to" ]]; then
+            rm "$to"
+        fi
+    elif [[ -s $td/actual ]]; then
+        err_malformed
+   fi
+}
+
+function extract_block {
+    if [[ "$(<$td/actual)" == "$(<$td/expected)" ]]; then
+        sed -n "/^$begin/,/$end/p" "$from" > $td/new
+        grep -Fvxf $td/expected $td/new
+    else
+        err_malformed
+    fi
+}
+
+readonly td=$(mktemp -d) && {
+    trap "rm -r $td" ERR EXIT
+    echo -e "$begin\n$end" > $td/expected
+    if [[ ${action} == extract ]]; then
+        grep -Fxf $td/expected "$from" > $td/actual || :
+    elif [[ -f "$to" ]] && [[ -s "$to" ]]; then
+        grep -Fxf $td/expected "$to" > $td/actual || :
+    else
+        > $td/actual
+    fi
+    ${action}_block
+}

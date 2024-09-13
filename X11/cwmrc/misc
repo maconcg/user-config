@@ -1,0 +1,11 @@
+color activeborder    gray20
+color inactiveborder  gray65
+color groupborder     red
+color ungroupborder   blue
+color urgencyborder   red
+
+borderwidth           3
+ignore                xconsole
+gap                   8 9 8 3
+snapdist              9
+sticky                yes

@@ -1,11 +1,17 @@
+default: all
+
 .include "overrides.mk"
 
 confdir ?= ${HOME}/.config
 
 .include "X11/include.mk"
 
-.PHONY: clean default
+.PHONY: default install uninstall clean
 
-default: X11
+all: X11
+
+install: X11/install
+
+uninstall: X11/uninstall
 
 clean: X11/clean

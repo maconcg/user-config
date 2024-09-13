@@ -1,2 +1,3 @@
-# confdir :=
-# dpi     :=
+# Xresources :=
+# confdir    :=
+# dpi        :=
