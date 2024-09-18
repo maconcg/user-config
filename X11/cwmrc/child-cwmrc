@@ -1,0 +1,7 @@
+borderwidth   0
+
+unbind-key    all
+unbind-mouse  all
+
+bind-key      4CS-f   window-fullscreen
+bind-key      4CS-Up  window-maximize

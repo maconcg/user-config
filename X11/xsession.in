@@ -1,0 +1,35 @@
+export LC_CTYPE=@LC_CTYPE@
+
+. ~/.profile
+
+# Override any already-set options 
+@SETXKBMAP@ -option
+
+# - Physical Alt_R produces Compose (“Multi_key”).
+# - Physical Caps_Lock produces Control.
+# - Physical Control_L produces Hyper.
+@XMODMAP@ \
+    -e 'clear control' \
+    -e 'clear lock' \
+    -e 'clear mod5' \
+    -e 'keycode 0x25 = Hyper_L Hyper_L' \
+    -e 'keycode 0x42 = Control_L Control_L' \
+    -e 'keycode 0x71 = Multi_key' \
+    -e 'add control = Control_L' \
+    -e 'add control = Control_R' \
+    -e 'remove mod4 = Hyper_L' \
+    -e 'add mod3 = Hyper_L'
+
+@XSET@ r rate 225 50
+
+@XIDLE@ -no -timeout 900 -program '@XLOCK@ -dpmsoff 8' &
+
+if [ -d @XSESSION_DIR@ ]; then
+    for f in @XSESSION_DIR@/*; do
+        if [ "${f##*/}" != '*' ] && [ -f "$f" ] && [ -x "$f" ]; then
+            . "$f"
+        fi
+    done
+fi
+
+exec @CWM@ -c @CWMRC_DEST@
