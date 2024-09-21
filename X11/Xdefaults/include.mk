@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © 2024 Macon Gambill
+
 X11-app-defaults ?= ${X11-dest}/app-defaults
 Xdefaults-dest   ?= ${HOME}/.Xdefaults
 dpi              ?= ${Xft-auto-dpi}

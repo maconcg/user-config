@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © 2024 Macon Gambill
+
 .PHONY: X11/cwmrc X11/cwmrc/clean X11/cwmrc/install X11/cwmrc/uninstall
 
 cwmrc-default-header := \# -*- mode: conf-space; -*-

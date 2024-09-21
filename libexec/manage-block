@@ -1,5 +1,8 @@
 #!/bin/sh -euf
 
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © 2024 Macon Gambill
+
 while getopts :c:def:n:t:u OPT; do
     case $OPT in
 	c) readonly comment="$OPTARG" ;;

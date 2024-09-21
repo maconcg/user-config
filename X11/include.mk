@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright © 2024 Macon Gambill
+
 LC_CTYPE      := en_US.UTF-8
 shebang       := \#!/bin/sh -
 X11-dest      := ${confdir}/X11
