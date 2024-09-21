@@ -10,7 +10,7 @@ The top-level `Makefile` works non-recursively by using `.include`
 directives.  While the makefiles have that going for them, they're
 generally less clear than they would have been if I were targeting GNU
 Make exclusively; GNU Make offers features like `VPATH` searching and
-built-in string manipulation punctions that I'd otherwise have used
+built-in string manipulation functions that I'd otherwise have used
 extensively here.  In order to use this as the first program I run on
 a fresh OpenBSD installation, however, I have to use their `make`
 implementation.  To be fair, OpenBSD's `make` is thoroughly correct in
